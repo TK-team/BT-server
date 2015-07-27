@@ -5,12 +5,9 @@ server_object = udp_server.o
 bin_client = udp_client
 client_object = udp_client.o
 
-.PHONY: server
-server: $(server_object) 
+.PHONY: all
+all: $(server_object) $(client_object)
 	cc -o $(bin_server) $(server_object)
-
-.PHONY: client
-client: $(client_object)
 	cc -o $(bin_client) $(client_object)
 
 %.o: %.c
@@ -18,4 +15,4 @@ client: $(client_object)
 
 .PHONY: clean
 clean:
-	rm $(bin) $(object)
+	rm -rf $(bin) $(server_object) $(client_object) $(bin_client) $(bin_server)
