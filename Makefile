@@ -17,4 +17,4 @@ all: $(server_object) $(client_object)
 
 .PHONY: clean
 clean:
-	rm -rf $(bin) $(server_object) $(client_object) $(bin_client) $(bin_server)
+	rm -rf $(server_object) $(client_object) $(bin_client) $(bin_server)
