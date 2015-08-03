@@ -31,10 +31,11 @@
 #define SERVER_PORT	6547
 #define RECV_BUF_SIZE	4096
 
+#define DEBUG 1
 #ifdef DEBUG
-#define DEBUG	printf
+#define DEBUG_PRINT	printf
 #else
-#define DEBUG
+#define DEBUG_PRINT
 #endif
 
 extern int errno;
@@ -72,12 +73,12 @@ int main(int argc, char *argv[])
 		switch (c) {
 		case 's':
 			srv_ip = argv[optind++];
-			DEBUG("server ip:%s\n", srv_ip);
+			DEBUG_PRINT("server ip:%s\n", srv_ip);
 			break;
 
 		case 'p':
 			srv_port = atoi(argv[optind++]);
-			DEBUG("server port:%d\n", srv_port);
+			DEBUG_PRINT("server port:%d\n", srv_port);
 			break;
 
 		case 'h':
@@ -90,7 +91,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	DEBUG("message: %s\n", argv[optind]);
+	DEBUG_PRINT("message: %s\n", argv[optind]);
 
 	cli_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (cli_sock < 0)

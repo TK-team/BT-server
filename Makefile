@@ -1,9 +1,11 @@
 # Use to compile the simple project.
 
 bin_server = udp_server
-server_object = udp_server.o
+server_object = udp_server.o seed_parse.o 
 bin_client = udp_client
 client_object = udp_client.o
+
+CFLAGS += -Wall
 
 .PHONY: all
 all: $(server_object) $(client_object)
