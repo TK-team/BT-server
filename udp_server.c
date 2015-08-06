@@ -2,11 +2,19 @@
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <setjmp.h>
+#include <stdarg.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+
+#define UNITTEST 1
+#ifdef UNITTEST
+#include "unittest/cmockery.h"
+#endif
 
 #define BUF_LEN 8192
 #define DEFAULT_SERVER_IP 0xc0a80001
@@ -49,11 +57,21 @@ void usage(void)
 	printf("%s\n", help);
 }
 
+// A test case that does nothing and succeeds.
+void null_test_success(void **state) {
+}
+
 int main(int argc, char **argv)
 {
 	unsigned short port = DEFAULT_SERVER_PORT;
 	struct in_addr ip;
 
+#ifdef UNITTEST
+	const UnitTest tests[] = {
+	    unit_test(null_test_success),
+	};
+	run_tests(tests);
+#endif
 	ip.s_addr = DEFAULT_SERVER_IP;
 	if (argc == 1) {
 		printf("udp_server use default ip and port: 192.168.0.1 30000\n");
