@@ -4,7 +4,7 @@ TOPDIR = $(shell /bin/pwd)
 SRC = $(TOPDIR)/src
 
 bin_server = $(SRC)/udp_server
-server_object = $(SRC)/udp_server.o $(SRC)/seed_parse.o 
+server_object = $(SRC)/udp_server.o $(SRC)/seed_parse.o
 bin_client = $(SRC)/udp_client
 client_object = $(SRC)/udp_client.o
 trace_object = $(SRC)/bttrace.o

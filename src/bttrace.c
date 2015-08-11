@@ -6,7 +6,7 @@
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  2015年08月11日 19时38分30秒
+ *        Created:  2015-08-11 19:38:30
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -21,7 +21,7 @@
 #include "bttrace.h"
 
 #ifdef _BTDEBUG
-static unsigned int msglevel = ERROR;
+static unsigned int msglevel = 1;
 #else
 static unsigned int msglevel = 0;
 #endif
@@ -42,7 +42,7 @@ unsigned int bt_get_msglevel(void)
 }
 
 #ifdef _BTDEBUG
-void print_msg(int level, char *format, ...)
+void print_msg(int level, const char *func, int line, char *format, ...)
 {
 	char buffer[2000];
 	int  nLen;
@@ -51,7 +51,7 @@ void print_msg(int level, char *format, ...)
 	if (!(level & BTTRACELEVEL))
 		return;
 
-	nLen = sprintf(buffer, "BT-Server: %s(%d)", __FUNCTION__, __LINE__);
+	nLen = sprintf(buffer, "BT-Server: %s(%d) ", func, line);
 	va_start(args, format);
 	nLen = vsprintf(buffer + nLen, format, args);
 	va_end(args);
