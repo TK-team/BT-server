@@ -10,7 +10,7 @@ client_object = $(SRC)/udp_client.o
 trace_object = $(SRC)/bttrace.o
 
 CFLAGS += -Wall -Iinclude -D_BTDEBUG
-LD_FLAGS += -Lcmockery -lcmockery
+LD_FLAGS += -L$(TOPDIR)/cmockery -lcmockery
 
 .PHONY: all
 all: $(server_object) $(client_object) $(trace_object)
