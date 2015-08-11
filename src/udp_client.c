@@ -26,17 +26,11 @@
 #include <errno.h>
 #include <string.h>
 #include <signal.h>
+#include "bttrace.h"
 
 #define SERVER_IP	"127.0.0.1"
 #define SERVER_PORT	6547
 #define RECV_BUF_SIZE	4096
-
-#define DEBUG 1
-#ifdef DEBUG
-#define DEBUG_PRINT	printf
-#else
-#define DEBUG_PRINT
-#endif
 
 extern int errno;
 extern char *optarg;
@@ -73,12 +67,12 @@ int main(int argc, char *argv[])
 		switch (c) {
 		case 's':
 			srv_ip = argv[optind++];
-			DEBUG_PRINT("server ip:%s\n", srv_ip);
+			TRACE(ERROR, "server ip:%s\n", srv_ip);
 			break;
 
 		case 'p':
 			srv_port = atoi(argv[optind++]);
-			DEBUG_PRINT("server port:%d\n", srv_port);
+			TRACE(ERROR, "server port:%d\n", srv_port);
 			break;
 
 		case 'h':
@@ -91,7 +85,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	DEBUG_PRINT("message: %s\n", argv[optind]);
+	TRACE(INFO, "message: %s\n", argv[optind]);
 
 	cli_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (cli_sock < 0)
