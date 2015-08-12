@@ -11,8 +11,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
-#define UNITTEST 1
-#ifdef UNITTEST
+#ifdef _UNIT_TEST
 #include "unittest/cmockery.h"
 #endif
 
@@ -42,7 +41,7 @@ int init_udp_server(unsigned int ip, unsigned short port)
 		n = 0;
 		memset(buf, 0, BUF_LEN);
 		n = recvfrom(fd, buf, BUF_LEN, 0, (struct sockaddr*)&server_ip, &len);
-		printf("%s\n", buf);
+		puts(buf);
 	} while (1);
 
 	return 0;
@@ -66,7 +65,7 @@ int main(int argc, char **argv)
 	unsigned short port = DEFAULT_SERVER_PORT;
 	struct in_addr ip;
 
-#ifdef UNITTEST
+#ifdef _UNIT_TEST
 	const UnitTest tests[] = {
 	    unit_test(null_test_success),
 	};

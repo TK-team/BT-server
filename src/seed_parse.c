@@ -11,15 +11,15 @@
 #include <limits.h>
 
 //#include "seed.h"
+#include "bttrace.h"
 #include "list.h"
-#define DEBUG_PRINT printf
 
 struct b_string {
 	unsigned int len;
 	char *string;
 };
 
-int parse_b_string(char *buf, struct b_string *target)
+char *parse_b_string(char *buf, struct b_string *target)
 {
 	char *ptr = buf;
 	char *s = strchr(ptr, ':');
@@ -32,19 +32,19 @@ int parse_b_string(char *buf, struct b_string *target)
 		
 		if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
                    || (errno != 0 && val == 0)) {
-			DEBUG_PRINT("strtol"); 
-			return -1;
+			TRACE(ERROR, "strtol"); 
+			return NULL;
            	}
 
 		if (endptr == ptr) {
-			DEBUG_PRINT("No digits were found\n");
-			return -1;
+			TRACE(ERROR, "No digits were found\n");
+			return NULL;
 		}
 		target->len = val;
 	}
 	else {
-		DEBUG_PRINT("B-coding string format error: %s\n", buf);
-		return -1;
+		TRACE(ERROR, "B-coding string format error: %s\n", buf);
+		return NULL;
 	}
 	return 0;
 }
