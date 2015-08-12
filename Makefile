@@ -3,6 +3,11 @@
 TOPDIR = $(shell /bin/pwd)
 SRC = $(TOPDIR)/src
 
+x86=$(shell uname -a | grep -io "x86_64" | head -1)
+ifneq "${x86}" "x86_64"
+x86=x86_3
+endif
+
 bin_server = $(SRC)/udp_server
 server_object = $(SRC)/udp_server.o $(SRC)/seed_parse.o
 bin_client = $(SRC)/udp_client
@@ -10,7 +15,7 @@ client_object = $(SRC)/udp_client.o
 trace_object = $(SRC)/bttrace.o
 
 CFLAGS += -Wall -Iinclude -D_BTDEBUG
-LD_FLAGS += -L$(TOPDIR)/cmockery -lcmockery
+LD_FLAGS += -L$(TOPDIR)/cmockery/${x86} -lcmockery
 
 .PHONY: all
 all: $(server_object) $(client_object) $(trace_object)
