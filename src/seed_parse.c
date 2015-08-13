@@ -11,9 +11,8 @@
 #include <string.h>
 #include <limits.h>
 
-#include "bttrace.h"
-#include "list.h"
-#define INTEGER_LEN 20
+#include "seed_parse.h"
+
 
 #ifdef _UNIT_TEST
 extern void mock_assert(const int result, const char* const expression, 
@@ -32,29 +31,6 @@ extern void _test_free(void* const ptr, const char* file, const int line);
 #define free(ptr) _test_free(ptr, __FILE__, __LINE__)
 #endif /* _UNIT_TEST */
 
-struct b_string {
-	struct list_head head;
-	unsigned int len;
-	char *string;
-};
-
-struct b_int {
-	struct list_head head;
-	unsigned int val;
-};
-
-struct b_list {
-	struct list_head head;
-	struct list_head int_list;
-	struct list_head str_list;
-};
-
-struct b_dict {
-	struct list_head head;
-	struct list_head int_list;
-	struct list_head str_list;
-	struct list_head list_list;
-};
 
 /*
  * parse example: 5:abcde --> len = 5, ptr = "abcde"
@@ -68,8 +44,8 @@ char *parse_string(char *buf, struct b_string *target)
 	char tmp[INTEGER_LEN + 1] = {};
 	long val = 0;
 
-	assert(buf);
-	assert(target);
+	assert(buf == NULL);
+	assert(target == NULL);
 	s = strchr(ptr, ':');
 	
 	if (s) {
@@ -104,8 +80,8 @@ char *parse_int(char *buf, struct b_int *ret)
 	char *ptr = buf;
 	char *end = NULL;
 	char tmp[INTEGER_LEN] = {};
-	assert(buf);
-	assert(ret);
+	assert(buf == NULL);
+	assert(ret == NULL);
 
 	unsigned int len = 0;
 	end = strchr(ptr, 'e');
@@ -176,8 +152,8 @@ void print_list(struct b_list *ret)
 char *parse_list(char *buf, struct b_list *ret)
 {
 	char *ptr = buf;
-	assert(buf);
-	assert(ret);
+	assert(buf == NULL);
+	assert(ret == NULL);
 
 	ptr ++;
 	while (*ptr != 'e') {
