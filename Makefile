@@ -5,7 +5,7 @@ SRC = $(TOPDIR)/src
 
 x86=$(shell uname -a | grep -io "x86_64" | head -1)
 ifneq "${x86}" "x86_64"
-x86=x86_3
+x86=x86_32
 endif
 
 ifeq "${CONFIG_UNIT_TEST}" "y"
