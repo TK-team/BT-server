@@ -21,7 +21,7 @@
 #include "bttrace.h"
 
 #ifdef _BTDEBUG
-static unsigned int msglevel = 1;
+static unsigned int msglevel = 7;
 #else
 static unsigned int msglevel = 0;
 #endif
