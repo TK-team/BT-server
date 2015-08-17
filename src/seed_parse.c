@@ -638,7 +638,7 @@ void feature_test(void **state) {
 	struct b_string *b = b_string_alloc();
 	struct b_list *c = b_list_alloc();
 	struct b_dict *d = b_dict_alloc();
-	char buf[] = "i12345e4:eeeel1:ai1234e1:bi4321eed7tristanli1234e4:eeeeee";
+	char buf[] = "i12345e4:eeeel1:ai1234e1:bi4321eed7:tristanli1234e4:eeeeee";
 	char *ptr = buf;
 
 	ptr = b_int_parse(ptr, a);
@@ -655,16 +655,25 @@ void feature_test(void **state) {
 	b_list_free(c);
 	b_dict_free(d);
 }
-#if 0
 /* case 2: parameters test */
-void string_null_parameters_test(void **state) {
-	struct b_string a;
-	expect_assert_failure(parse_string("5:abcde", NULL));
-	expect_assert_failure(parse_string(NULL, &a));
-	expect_assert_failure(parse_int("5:abcde", NULL));
-	expect_assert_failure(parse_int(NULL, NULL));
+void list_parameters_test(void **state) {
+	char buf[][100] = {"ld2:idi12121212e4:name7:tristanei123123e2:abe",
+				"li123ee", "llleee", "lelel", "lllee", "ll",
+				"123", ""};
+	int i = 0;
+	char *ptr = NULL;
+
+	for (i = 0; i < (sizeof(buf)/100); i++) {
+		struct b_list *a = b_list_alloc();
+		ptr = buf[i];
+		TRACE(DUMP, "ptr %s\n", ptr);
+		ptr = b_list_parse(ptr, a);
+		b_list_print(a);
+		b_list_free(a);
+	}
 }
 
+#if 0
 /* case 3: bad parameters test */
 void string_bad_parameters_test_1(void **state) {
 	struct b_string a = {};
@@ -768,20 +777,8 @@ void list_feature_test(void **state) {
 int main(int argc, char **argv)
 {
 	const UnitTest tests[] = {
-	    unit_test(feature_test),
-	#if 0
-	    unit_test(string_null_parameters_test),
-	    unit_test(string_bad_parameters_test_1),
-	    unit_test(string_bad_parameters_test_2),
-	    unit_test(string_bad_parameters_test_3),
-	    unit_test(string_bad_parameters_test_4),
-	    unit_test(int_bad_parameters_test_1),
-	    unit_test(int_bad_parameters_test_2),
-	    unit_test(int_bad_parameters_test_3),
-	    unit_test(int_bad_parameters_test_4),
-	    unit_test(int_bad_parameters_test_5),
-	#endif
-	    //unit_test(list_feature_test),
+	    //unit_test(feature_test),
+	    unit_test(list_parameters_test),
 	};
 
 	run_tests(tests);
