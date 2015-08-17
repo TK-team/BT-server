@@ -178,10 +178,18 @@ char *b_int_parse(char *buf, struct b_int *ret)
 	}
 }
 
-int init_b_list(struct b_list *list)
+struct l_entry *l_entry_alloc(char type)
 {
-	INIT_LIST_HEAD(&list->l_list);
-	return 0;
+	struct l_entry *ptr = malloc(sizeof(struct l_entry));
+
+	if (ptr) {
+		ptr->type = type;
+		ptr->entry = NULL;
+		INIT_LIST_HEAD(&ptr->head);
+		return ptr;
+	}
+	else
+		return NULL;
 }
 
 void l_entry_free(struct l_entry *ptr)
@@ -228,11 +236,10 @@ void l_entry_print(struct l_entry *ptr)
 	}
 }
 
-void del_b_entry(struct l_entry *entry)
+struct b_list *b_list_alloc(void)
 {
 	struct b_list *ptr = malloc(sizeof(struct b_list));
-
-	if (ptr){
+	if (ptr) {
 		INIT_LIST_HEAD(&ptr->l_list);
 		ptr->prev = NULL;
 		return ptr;
@@ -241,22 +248,31 @@ void del_b_entry(struct l_entry *entry)
 		return NULL;
 }
 
-void free_b_list(struct b_list *list)
+void b_list_add(void *entry, struct b_list *list_ptr, char type)
 {
-	struct l_entry *tmp;
-	struct l_entry *vec;
+	struct l_entry *ptr = l_entry_alloc(type);
 
-	list_for_each_entry_safe(vec, tmp, &list->l_list, head) {
-		swtich (vec->type) {
+	if (ptr) {
+		ptr->entry = entry;
+		switch (type) {
 		case 'l':
-			free_b_list((struct b_list *)(vec->val));
+		{
+			struct b_list *tmp_list = (struct b_list *)entry;
+			tmp_list->prev = (void *)ptr;
 			break;
+		}
 		case 'i':
+		{
+			struct b_int *tmp_int = (struct b_int *)entry;
+			tmp_int->prev = (void *)ptr;
 			break;
+		}
 		case 's':
-			if (((struct b_string *)vec)->string)
-				free(((struct b_string *)(vec->val))->string);
+		{
+			struct b_string *tmp_str = (struct b_string *)entry;
+			tmp_str->prev = (void *)ptr;
 			break;
+		}
 		case 'd':
 		{
 			struct b_dict *tmp_dict = (struct b_dict *)entry;
@@ -265,11 +281,14 @@ void free_b_list(struct b_list *list)
 		}
 		default:
 			TRACE(ERROR, "Error list entry type\n");
+			goto DEAL_ERR;
 		}
-		list_add_tail(&ptr->head, &list->l_list);
+		list_add_tail(&ptr->head, &list_ptr->l_list);
 	}
 	else
 		TRACE(ERROR, "No memory to alloc l_entry\n");
+DEAL_ERR:
+	return;
 }
 
 void b_list_del(void *entry)

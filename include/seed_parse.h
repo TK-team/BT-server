@@ -12,13 +12,13 @@
 #define KEY_LEN			128
 
 struct b_string {
-	struct list_head head;
+	void *prev;
 	unsigned int len;
 	char *string;
 };
 
 struct b_int {
-	struct list_head head;
+	void *prev;
 	unsigned int val;
 };
 
@@ -29,7 +29,7 @@ struct l_entry {
 };
 
 struct b_list {
-	struct list_head head;
+	void *prev;
 	struct list_head l_list; /* list of l_entry */
 };
 
