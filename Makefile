@@ -25,8 +25,8 @@ server_object = $(SRC)/udp_server.o
 bin_client = $(SRC)/udp_client
 client_object = $(SRC)/udp_client.o
 trace_object = $(SRC)/bttrace.o
-bin_seed_parse = $(SRC)/seed_parse
-seed_parse_object = $(SRC)/seed_parse.o
+bin_seed_parse = $(SRC)/b_parse
+seed_parse_object = $(SRC)/b_parse.o
 
 CFLAGS += -Wall -Iinclude -D_BTDEBUG
 

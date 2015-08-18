@@ -12,7 +12,7 @@
 #include <string.h>
 #include <limits.h>
 
-#include "seed_parse.h"
+#include "b_parse.h"
 
 #ifdef _UNIT_TEST
 extern void mock_assert(const int result, const char* const expression, 
@@ -539,7 +539,8 @@ char *b_dict_parse(char *buf, struct b_dict *ret)
 			if (new_list) {
 				ptr = b_list_parse(ptr, new_list);
 				if (ptr)
-					b_dict_add((void *)new_list, b_string_get(new_key), ret, 'l');
+					b_dict_add((void *)new_list,
+						b_string_get(new_key), ret, 'l');
 				else {
 					b_string_free(new_key);
 					b_list_free(new_list);
@@ -554,7 +555,8 @@ char *b_dict_parse(char *buf, struct b_dict *ret)
 			if (new_int) {
 				ptr = b_int_parse(ptr, new_int);
 				if (ptr)
-					b_dict_add((void *)new_int, b_string_get(new_key), ret, 'i');
+					b_dict_add((void *)new_int, 
+						b_string_get(new_key), ret, 'i');
 				else {
 					b_string_free(new_key);
 					b_int_free(new_int);
@@ -569,7 +571,8 @@ char *b_dict_parse(char *buf, struct b_dict *ret)
 			if (new_dict) {
 				ptr = b_dict_parse(ptr, new_dict);
 				if (ptr)
-					b_dict_add((void *)new_dict, b_string_get(new_key), ret, 'd');
+					b_dict_add((void *)new_dict,
+						b_string_get(new_key), ret, 'd');
 				else {
 					b_string_free(new_key);
 					b_dict_free(new_dict);
@@ -585,7 +588,8 @@ char *b_dict_parse(char *buf, struct b_dict *ret)
 			if (new_str) {
 				ptr = b_string_parse(ptr, new_str);
 				if (ptr)
-					b_dict_add((void *)new_str, b_string_get(new_key), ret, 's');
+					b_dict_add((void *)new_str,
+						b_string_get(new_key), ret, 's');
 				else {
 					b_string_free(new_key);
 					b_string_free(new_str);
@@ -655,7 +659,7 @@ void feature_test(void **state) {
 	b_list_free(c);
 	b_dict_free(d);
 }
-/* case 2: parameters test */
+/* case 2: list parameters test */
 void list_parameters_test(void **state) {
 	char buf[][100] = {"ld2:idi12121212e4:name7:tristanei123123e2:abe",
 				"li123ee", "llleee", "lelel", "lllee", "ll",
@@ -673,112 +677,30 @@ void list_parameters_test(void **state) {
 	}
 }
 
-#if 0
-/* case 3: bad parameters test */
-void string_bad_parameters_test_1(void **state) {
-	struct b_string a = {};
-	char s[] = "x5:abcde";
+/* case 3: dict parameters test */
+void dict_parameters_test(void **state) {
+	char buf[][100] = {"d2:idi12121212e4:name7:tristane",
+				"de", "d", "e", "d4:hashe", 
+				"d4:haha", "", "dkasjflkajsdlkfjalsdf"};
+	int i = 0;
+	char *ptr = NULL;
 
-	parse_string(s, &a);
-	TRACE(ERROR, "string length %d, context %s\n", a.len, a.string);
-	if (a.string)
-		free(a.string);
+	for (i = 0; i < (sizeof(buf)/100); i++) {
+		struct b_dict *a = b_dict_alloc();
+		ptr = buf[i];
+		TRACE(DUMP, "ptr %s\n", ptr);
+		ptr = b_dict_parse(ptr, a);
+		b_dict_print(a);
+		b_dict_free(a);
+	}
 }
-
-/* case 4: bad parameters test */
-void string_bad_parameters_test_2(void **state) {
-	struct b_string a = {};
-	char s[] = "5abcde";
-
-	parse_string(s, &a);
-	TRACE(ERROR, "string length %d, context %s\n", a.len, a.string);
-	if (a.string)
-		free(a.string);
-}
-
-/* case 5: bad parameters test */
-void string_bad_parameters_test_3(void **state) {
-	struct b_string a = {};
-
-	parse_string(":12345", &a);
-	TRACE(ERROR, "string length %d, context %s\n", a.len, a.string);
-	if (a.string)
-		free(a.string);
-}
-
-/* case 6: bad parameters test */
-void string_bad_parameters_test_4(void **state) {
-	struct b_string a = {};
-	char s[] = "20:1231231asdfasdfl;asdf\nasdf\n%%12345";
-
-	parse_string(s, &a);
-	TRACE(ERROR, "string length %d, context %s\n", a.len, a.string);
-	if (a.string)
-		free(a.string);
-}
-
-/* case 7: bad parameters test */
-void int_bad_parameters_test_1(void **state) {
-	struct b_int ret = {};
-	char input[] = "1231241";
-
-	parse_int(input, &ret);
-	TRACE(ERROR, "Input %s\t val %d\n", input, ret.val);
-}
-
-/* case 8: bad parameters test */
-void int_bad_parameters_test_2(void **state) {
-	struct b_int ret = {};
-	char input[] = "i1231241";
-
-	parse_int(input, &ret);
-	TRACE(ERROR, "Input %s\t val %d\n", input, ret.val);
-}
-
-/* case 9: bad parameters test */
-void int_bad_parameters_test_3(void **state) {
-	struct b_int ret = {};
-	char input[] = "1231241e";
-
-	parse_int(input, &ret);
-	TRACE(ERROR, "Input %s\t val %d\n", input, ret.val);
-}
-
-/* case 10: bad parameters test */
-void int_bad_parameters_test_4(void **state) {
-	struct b_int ret = {};
-	char input[] = "i1231231231231231231231241e";
-
-	parse_int(input, &ret);
-	TRACE(ERROR, "Input %s\t val %d\n", input, ret.val);
-}
-
-/* case 11: bad parameters test */
-void int_bad_parameters_test_5(void **state) {
-	struct b_int ret = {};
-	char input[] = "i1231i23123e1231231231231241e";
-
-	parse_int(input, &ret);
-	TRACE(ERROR, "Input %s\t val %d\n", input, ret.val);
-}
-
-/* case 11: feature test */
-void list_feature_test(void **state) {
-	struct b_list ret;
-	char input[] = "li100e3:123e";
-
-	init_b_list(&ret);
-	parse_list(input, &ret);
-	print_list(&ret);
-	free_b_list(&ret);
-}
-#endif
 
 int main(int argc, char **argv)
 {
 	const UnitTest tests[] = {
-	    //unit_test(feature_test),
+	    unit_test(feature_test),
 	    unit_test(list_parameters_test),
+	    unit_test(dict_parameters_test),
 	};
 
 	run_tests(tests);
