@@ -695,12 +695,43 @@ void dict_parameters_test(void **state) {
 	}
 }
 
+
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+/* case 4: torrent parse test */
+void torrent_test(void **state) {
+	int fd = 0;
+	char *buf = NULL;
+	char *ptr = NULL;
+	struct b_dict *a = b_dict_alloc();
+	struct stat t_stat;
+	int len = 0;
+
+	fd = open("./src/test.torrent", O_RDONLY);
+	if (fd < 0) {
+		b_dict_free(a);
+		return;
+	}
+	fstat(fd, &t_stat);
+
+	buf = malloc(t_stat.st_size);
+	memset(buf, 0, t_stat.st_size);
+	len = read(fd, buf, t_stat.st_size);
+	ptr = b_dict_parse(buf, a);
+	b_dict_print(a);
+	b_dict_free(a);
+	free(buf);
+}
+
 int main(int argc, char **argv)
 {
 	const UnitTest tests[] = {
-	    unit_test(feature_test),
-	    unit_test(list_parameters_test),
-	    unit_test(dict_parameters_test),
+	    //unit_test(feature_test),
+	    //unit_test(list_parameters_test),
+	    //unit_test(dict_parameters_test),
+	    unit_test(torrent_test),
 	};
 
 	run_tests(tests);
