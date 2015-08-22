@@ -1,13 +1,10 @@
-#define FILE_NAME_LEN		256
-#define URL_LEN			512
-#define COMMENT_LEN		1024
-#define NAME_DEFAULT_LEN	256
+#ifndef _TORRENT_H_
+#define _TORRENT_H_
 
 #include "bttrace.h"
 #include "b_parse.h"
 
 /* Torrent relate structure */
-//TODO: need to reconsitution
 struct multi_files {
 	struct list_head head;
 	unsigned long long length;
@@ -18,7 +15,7 @@ struct multi_files {
 /* point to multi_files */
 struct info_multi_file {
 	struct list_head files_list;
-	struct b_string name;
+	struct b_string name; /* name of the dirctory for the files. */
 };
 
 struct torrent_info {
@@ -45,3 +42,4 @@ struct torrent {
 	struct torrent_info info;
 };
 
+#endif /* _TORRENT_H_ */
