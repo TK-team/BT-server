@@ -1,10 +1,11 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
+#include <time.h>
 
 #include "torrent.h"
 
@@ -83,7 +84,6 @@ void info_multi_files_free(struct info_multi_file *ptr)
 			multi_files_free(vec);
 
 		b_string_free(ptr->dir_name);
-		free(ptr);
 	}
 }
 
@@ -268,6 +268,34 @@ int torrent_parse(char *buf, struct torrent *ptr)
 		return -1;
 }
 
+void torrent_info_print(struct torren_info *ptr)
+{
+
+}
+void torrent_print(struct torrent *ptr)
+{ 
+	time_t t = (time_t )(ptr->create_date);
+
+	TRACE(INFO, "[ Torrent Info BEGIN ]\n");
+	if (ptr->announce)
+		TRACE(INFO, "[ announce ]:\n%s\n", b_string_get(ptr->announce));
+	//TRACE(INFO, "[ announce list ]:\n%s\n", b_string_get(ptr->announce_list));
+	if (ptr->announce_list)
+		b_list_print(ptr->announce_list);
+	if (ptr->comment)
+		TRACE(INFO, "[ comment ]:\n%s\n", b_string_get(ptr->comment));
+	if (ptr->comment_utf8)
+		TRACE(INFO, "[ comment(utf8) ]:\n%s\n", b_string_get(ptr->comment_utf8));
+	if (ptr->create_by)
+		TRACE(INFO, "[ create by ]:\n%s\n", b_string_get(ptr->create_by));
+	if (t)
+		TRACE(INFO, "[ create date ]:\n%s\n", ctime(&t));
+	if (ptr->encoding)
+		TRACE(INFO, "[ encoding ]:\n%d\n", ptr->encoding);
+	torrent_info_print(&ptr->info);
+	TRACE(INFO, "[ Torrent Info END ]\n");
+}
+
 #ifdef _UNIT_TEST
 
 #include <setjmp.h>
@@ -283,12 +311,11 @@ int torrent_parse(char *buf, struct torrent *ptr)
 void torrent_test_1(void **state) {
 	int fd = 0;
 	char *buf = NULL;
-	struct b_dict *a = b_dict_alloc();
+	struct torrent * t = NULL;
 	struct stat t_stat;
 
 	fd = open("./src/test.torrent", O_RDONLY);
 	if (fd < 0) {
-		b_dict_free(a);
 		return;
 	}
 	fstat(fd, &t_stat);
@@ -296,9 +323,12 @@ void torrent_test_1(void **state) {
 	buf = malloc(t_stat.st_size);
 	memset(buf, 0, t_stat.st_size);
 	read(fd, buf, t_stat.st_size);
-	b_dict_parse(buf, a);
-	b_dict_print(a);
-	b_dict_free(a);
+	t = torrent_alloc();
+	if (t) {
+		torrent_parse(buf, t);
+		torrent_print(t);
+		torrent_free(t);
+	}
 	free(buf);
 }
 
