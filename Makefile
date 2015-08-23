@@ -36,7 +36,7 @@ CFLAGS += -Wall -Iinclude -D_BTDEBUG
 all: $(server_object) $(client_object) $(trace_object) $(b_parse_object) $(torrent_parse_object)
 	cc -o $(bin_server) $(trace_object) $(server_object) $(LD_FLAGS)
 	cc -o $(bin_client) $(trace_object) $(client_object)
-	cc -o $(bin_b_parse) $(b_parse_object) $(trace_object) $(LD_FLAGS)
+	#cc -o $(bin_b_parse) $(b_parse_object) $(trace_object) $(LD_FLAGS)
 	cc -o $(bin_torrent_parse) $(torrent_parse_object) $(b_parse_object) $(trace_object) $(LD_FLAGS)
 
 %.o: %.c

@@ -14,6 +14,7 @@
 
 #include "b_parse.h"
 
+#undef _UNIT_TEST
 #ifdef _UNIT_TEST
 extern void mock_assert(const int result, const char* const expression, 
 		                        const char * const file, const int line);
