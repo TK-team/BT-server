@@ -4,7 +4,8 @@
 #include "bttrace.h"
 #include "b_parse.h"
 
-/* Torrent relate structure */
+#define CMP_EQUAL			0
+
 struct multi_files {
 	struct list_head head;
 	unsigned long long length;
@@ -15,7 +16,7 @@ struct multi_files {
 /* point to multi_files */
 struct info_multi_file {
 	struct list_head files_list;
-	struct b_string name; /* name of the dirctory for the files. */
+	struct b_string *dir_name; /* name of the dirctory for the files. */
 };
 
 struct torrent_info {
@@ -26,6 +27,7 @@ struct torrent_info {
 	struct b_string *name;
 	struct b_string *name_utf8;
 	unsigned long long length;
+	struct b_string *single_md5;
 	struct b_string *publisher;
 	struct b_string *publisher_utf8;
 	struct b_string *publisher_url;
@@ -37,6 +39,7 @@ struct torrent {
 	struct b_list *announce_list;
 	struct b_string *comment;
 	struct b_string *comment_utf8;
+	struct b_string *create_by;
 	unsigned int create_date;
 	unsigned int encoding;
 	struct torrent_info info;

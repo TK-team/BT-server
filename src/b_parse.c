@@ -51,9 +51,11 @@ struct b_string *b_string_alloc(void)
 
 void b_string_free(struct b_string *ptr)
 {
-	if (ptr->string)
-		free(ptr->string);
-	free(ptr);
+	if (ptr) {
+		if (ptr->string)
+			free(ptr->string);
+		free(ptr);
+	}
 }
 
 void b_string_set(struct b_string *ptr, char *buf)
@@ -124,7 +126,8 @@ struct b_int *b_int_alloc(void)
 
 void b_int_free(struct b_int *ptr)
 {
-	free(ptr);
+	if (ptr)
+		free(ptr);
 }
 
 void b_int_set(struct b_int *ptr, unsigned int val)
@@ -299,12 +302,14 @@ void b_list_del(void *entry)
 
 void b_list_free(struct b_list *ptr)
 {
-	struct l_entry *tmp;
-	struct l_entry *vec;
+	if (ptr) {
+		struct l_entry *tmp;
+		struct l_entry *vec;
 
-	list_for_each_entry_safe(vec, tmp, &ptr->l_list, head)
-		l_entry_free(vec);
-	free(ptr);
+		list_for_each_entry_safe(vec, tmp, &ptr->l_list, head)
+			l_entry_free(vec);
+		free(ptr);
+	}
 }
 
 char *b_list_parse(char *buf, struct b_list *ret)
@@ -609,12 +614,14 @@ DEAL_ERR:
 
 void b_dict_free(struct b_dict *ptr)
 {
-	struct d_entry *tmp;
-	struct d_entry *vec;
+	if (ptr) {
+		struct d_entry *tmp;
+		struct d_entry *vec;
 
-	list_for_each_entry_safe(vec, tmp, &ptr->d_list, head)
-		d_entry_free(vec);
-	free(ptr);
+		list_for_each_entry_safe(vec, tmp, &ptr->d_list, head)
+			d_entry_free(vec);
+		free(ptr);
+	}
 }
 
 void b_dict_print(struct b_dict *ptr)

@@ -25,21 +25,24 @@ server_object = $(SRC)/udp_server.o
 bin_client = $(SRC)/udp_client
 client_object = $(SRC)/udp_client.o
 trace_object = $(SRC)/bttrace.o
-bin_seed_parse = $(SRC)/b_parse
-seed_parse_object = $(SRC)/b_parse.o
+bin_b_parse = $(SRC)/b_parse
+b_parse_object = $(SRC)/b_parse.o
+bin_torrent_parse = $(SRC)/torrent_parse
+torrent_parse_object = $(SRC)/torrent_parse.o
 
 CFLAGS += -Wall -Iinclude -D_BTDEBUG
 
 .PHONY: all 
-all: $(server_object) $(client_object) $(trace_object) $(seed_parse_object)
+all: $(server_object) $(client_object) $(trace_object) $(b_parse_object) $(torrent_parse_object)
 	cc -o $(bin_server) $(trace_object) $(server_object) $(LD_FLAGS)
 	cc -o $(bin_client) $(trace_object) $(client_object)
-	cc -o $(bin_seed_parse) $(seed_parse_object) $(trace_object) $(LD_FLAGS)
+	cc -o $(bin_b_parse) $(b_parse_object) $(trace_object) $(LD_FLAGS)
+	cc -o $(bin_torrent_parse) $(torrent_parse_object) $(b_parse_object) $(trace_object) $(LD_FLAGS)
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 
 .PHONY: clean
 clean:
-	rm -rf $(trace_object) $(server_object) $(client_object) $(bin_client) $(bin_server) $(seed_parse_object) $(bin_seed_parse)
+	rm -rf $(trace_object) $(server_object) $(client_object) $(bin_client) $(bin_server) $(b_parse_object) $(bin_b_parse) $(torrent_parse_object) $(bin_torrent_parse)
 
