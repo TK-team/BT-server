@@ -9,8 +9,9 @@
 struct multi_files {
 	struct list_head head;
 	unsigned long long length;
-	struct b_string *path;
-	struct b_string *path_utf8;
+	struct b_list *path;
+	struct b_list *path_utf8;
+	struct b_string *md5sum;
 };
 
 /* point to multi_files */
@@ -22,12 +23,12 @@ struct info_multi_file {
 struct torrent_info {
 	unsigned int piece_len;
 	struct b_string *piece_hash;
-	unsigned char privated;
+	struct b_string *private;
 	struct info_multi_file multi;
 	struct b_string *name;
 	struct b_string *name_utf8;
 	unsigned long long length;
-	struct b_string *single_md5;
+	struct b_string *md5sum;
 	struct b_string *publisher;
 	struct b_string *publisher_utf8;
 	struct b_string *publisher_url;

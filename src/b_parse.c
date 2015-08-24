@@ -69,6 +69,11 @@ char *b_string_get(struct b_string *ptr)
 	return ptr->string;
 }
 
+unsigned int b_string_get_length(struct b_string *ptr)
+{
+	return ptr->len;
+}
+
 void b_string_print(struct b_string *ptr)
 {
 	TRACE(INFO, "%s\n", ptr->string);

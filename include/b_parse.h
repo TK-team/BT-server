@@ -45,6 +45,7 @@ extern struct b_string *b_string_alloc(void);
 extern void b_string_free(struct b_string *ptr);
 extern void b_string_set(struct b_string *ptr, char *buf);
 extern char *b_string_get(struct b_string *ptr);
+extern unsigned int b_string_get_length(struct b_string *ptr);
 extern void b_string_print(struct b_string *ptr);
 extern char *b_string_parse(char *buf, struct b_string *target);
 extern struct b_int *b_int_alloc(void);
