@@ -74,6 +74,11 @@ unsigned int b_string_get_length(struct b_string *ptr)
 	return ptr->len;
 }
 
+b_string_set_length(struct b_string *ptr, unsigned int len)
+{
+	ptr->len = len;
+}
+
 void b_string_print(struct b_string *ptr)
 {
 	TRACE(INFO, "%s\n", ptr->string);
