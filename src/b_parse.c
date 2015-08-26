@@ -53,8 +53,10 @@ struct b_string *b_string_alloc(void)
 void b_string_free(struct b_string *ptr)
 {
 	if (ptr) {
-		if (ptr->string)
-			free(ptr->string);
+		if (ptr->string) {
+			memset(ptr->string, 0, ptr->len);
+			//free(ptr->string);
+		}
 		free(ptr);
 	}
 }
@@ -74,7 +76,7 @@ unsigned int b_string_get_length(struct b_string *ptr)
 	return ptr->len;
 }
 
-b_string_set_length(struct b_string *ptr, unsigned int len)
+void b_string_set_length(struct b_string *ptr, unsigned int len)
 {
 	ptr->len = len;
 }
@@ -84,6 +86,19 @@ void b_string_print(struct b_string *ptr)
 	TRACE(INFO, "%s\n", ptr->string);
 }
 
+void b_string_hex_print(struct b_string *ptr)
+{
+	int i = 0;
+
+	TRACE(INFO, "[ b_string_hex_print %p ]\n", ptr);
+	for (; i < ptr->len; i++) {
+		if (i && !(i % 16))
+			printf("\n");
+		printf("%02x ", *(ptr->string + i));
+	}
+	printf("\n");
+	TRACE(INFO, "[ b_string_hex_print end ]\n");
+}
 char *b_string_parse(char *buf, struct b_string *target)
 {
 	char *ptr = buf;

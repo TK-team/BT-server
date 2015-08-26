@@ -29,15 +29,18 @@ bin_b_parse = $(SRC)/b_parse
 b_parse_object = $(SRC)/b_parse.o
 bin_torrent_parse = $(SRC)/torrent_parse
 torrent_parse_object = $(SRC)/torrent_parse.o
+bin_peer_message = $(SRC)/peer_message
+peer_message_object = $(SRC)/peer_message.o
 
 CFLAGS += -Wall -Iinclude -D_BTDEBUG
 
 .PHONY: all 
-all: $(server_object) $(client_object) $(trace_object) $(b_parse_object) $(torrent_parse_object)
+all: $(server_object) $(client_object) $(trace_object) $(b_parse_object) $(torrent_parse_object) $(peer_message_object)
 	cc -o $(bin_server) $(trace_object) $(server_object) $(LD_FLAGS)
 	cc -o $(bin_client) $(trace_object) $(client_object)
 	#cc -o $(bin_b_parse) $(b_parse_object) $(trace_object) $(LD_FLAGS)
 	cc -o $(bin_torrent_parse) $(torrent_parse_object) $(b_parse_object) $(trace_object) $(LD_FLAGS)
+	cc -o $(bin_peer_message) $(peer_message_object) $(trace_object) $(b_parse_object) $(LD_FLAGS)
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
