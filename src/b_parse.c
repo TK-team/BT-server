@@ -41,7 +41,8 @@ struct b_string *b_string_alloc(void)
 
 	if (ptr) {
 		ptr->len = 0;
-		ptr->string = NULL;
+		ptr->data = NULL;
+		ptr->head = NULL;
 		ptr->prev = NULL;
 		return ptr;
 	}
@@ -52,22 +53,22 @@ struct b_string *b_string_alloc(void)
 void b_string_free(struct b_string *ptr)
 {
 	if (ptr) {
-		if (ptr->string) {
-			memset(ptr->string, 0, ptr->len);
-			free(ptr->string);
+		if (ptr->head) {
+			free(ptr->head);
 		}
 		free(ptr);
 	}
 }
 
-void b_string_set(struct b_string *ptr, char *buf)
+void b_string_set(struct b_string *ptr, char *buf, unsigned int reserved)
 {
-	ptr->string = buf;
+	ptr->head = buf;
+	ptr->data = buf + reserved;
 }
 
 char *b_string_get(struct b_string *ptr)
 {
-	return ptr->string;
+	return ptr->data;
 }
 
 unsigned int b_string_get_length(struct b_string *ptr)
@@ -82,7 +83,7 @@ void b_string_set_length(struct b_string *ptr, unsigned int len)
 
 void b_string_print(struct b_string *ptr)
 {
-	TRACE(INFO, "%s\n", ptr->string);
+	TRACE(INFO, "%s\n", b_string_get(ptr));
 }
 
 void b_string_hex_print(struct b_string *ptr)
@@ -93,7 +94,7 @@ void b_string_hex_print(struct b_string *ptr)
 	for (; i < ptr->len; i++) {
 		if (i && !(i % 16))
 			printf("\n");
-		printf("%02x ", *(ptr->string + i));
+		printf("%02x ", *(ptr->data + i));
 	}
 	printf("\n");
 	TRACE(INFO, "[ b_string_hex_print end ]\n");
@@ -111,6 +112,8 @@ char *b_string_parse(char *buf, struct b_string *target)
 	s = strchr(ptr, ':');
 	
 	if (s) {
+		char *tmp_b = NULL;
+
 		memcpy(tmp, buf, (INTEGER_LEN > (s - buf) ? (s - buf) : INTEGER_LEN));
 		val = strtol(tmp, &endptr, 10);
 		
@@ -124,10 +127,12 @@ char *b_string_parse(char *buf, struct b_string *target)
 			TRACE(ERROR, "No digits were found\n");
 			return NULL;
 		}
-		target->len = val;
-		target->string = malloc(sizeof(char) * (val + 1));
-		memcpy(target->string, s + 1, val);
-		*(target->string + val) = '\0';
+		tmp_b = malloc(sizeof(char) * (val + 1));
+		b_string_set(target, tmp_b, 0);
+		b_string_set_length(target, val);
+		tmp_b = b_string_get(target);
+		memcpy(tmp_b, s + 1, val);
+		*(tmp_b + val) = '\0';
 		return (s + val + 1);
 	}
 	else {

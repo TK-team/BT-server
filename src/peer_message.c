@@ -38,7 +38,7 @@ struct b_string *generate_handshake_message(char *info_hash, char *peer_id)
 		ptr = b_string_alloc();
 		if (ptr) {
 			buf = malloc((HANDSHAKE_MESSAGE_LEN + 1) * sizeof(char));
-			b_string_set(ptr, buf);
+			b_string_set(ptr, buf, 0);
 			memset(buf, 0, HANDSHAKE_MESSAGE_LEN + 1);
 			*buf = DEFAULT_PSTRLEN;
 			memcpy(buf + 1, DEFAULT_PSTR, DEFAULT_PSTRLEN); 
@@ -55,7 +55,7 @@ struct b_string *generate_handshake_message(char *info_hash, char *peer_id)
 		return NULL;
 }
 
-/* need relloc should be piece message */
+/* need relloc: for piece message */
 struct b_string *generate_common_message(unsigned int len_prefix, 
 		unsigned char message_id, char *payload, unsigned int need_relloc)
 {
@@ -71,7 +71,7 @@ struct b_string *generate_common_message(unsigned int len_prefix,
 		if (buf) {
 			unsigned int tmp = htonl(len_prefix);
 
-			b_string_set(ptr, buf);
+			b_string_set(ptr, buf, 0);
 			b_string_set_length(ptr, len_prefix + 4);
 			memcpy(buf, &tmp, 4);
 			if (len_prefix > 0)

@@ -9,7 +9,9 @@
 
 struct b_string {
 	void *prev;
-	char *string;
+	/*add head as the sk_buff, to support reserved buffer. */
+	char *data;
+	char *head;
 	unsigned int len;
 };
 
@@ -43,7 +45,7 @@ struct b_dict {
 
 extern struct b_string *b_string_alloc(void);
 extern void b_string_free(struct b_string *ptr);
-extern void b_string_set(struct b_string *ptr, char *buf);
+extern void b_string_set(struct b_string *ptr, char *buf, unsigned int reserved);
 extern char *b_string_get(struct b_string *ptr);
 extern unsigned int b_string_get_length(struct b_string *ptr);
 extern void b_string_set_length(struct b_string *ptr, unsigned int len);
