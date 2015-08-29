@@ -47,5 +47,5 @@ all: $(server_object) $(client_object) $(trace_object) $(b_parse_object) $(torre
 
 .PHONY: clean
 clean:
-	rm -rf $(trace_object) $(server_object) $(client_object) $(bin_client) $(bin_server) $(b_parse_object) $(bin_b_parse) $(torrent_parse_object) $(bin_torrent_parse)
+	rm -rf $(trace_object) $(server_object) $(client_object) $(bin_client) $(bin_server) $(b_parse_object) $(bin_b_parse) $(torrent_parse_object) $(bin_torrent_parse) $(peer_message_object) $(bin_peer_message)
 

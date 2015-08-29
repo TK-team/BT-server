@@ -9,6 +9,8 @@
 #include <time.h> 
 
 #include "peer_message.h"
+#include "b_parse.h"
+#include "list.h"
 
 #ifdef _UNIT_TEST
 extern void mock_assert(const int result, const char* const expression, 
@@ -35,9 +37,9 @@ struct b_string *make_handshake_message(char *info_hash, char *peer_id)
 	if (info_hash && peer_id) {
 		ptr = b_string_alloc();
 		if (ptr) {
-			buf = malloc(HANDSHAKE_MESSAGE_LEN * sizeof(char));
+			buf = malloc((HANDSHAKE_MESSAGE_LEN + 1) * sizeof(char));
 			b_string_set(ptr, buf);
-			memset(buf, 0, HANDSHAKE_MESSAGE_LEN);
+			memset(buf, 0, HANDSHAKE_MESSAGE_LEN + 1);
 			*buf = DEFAULT_PSTRLEN;
 			memcpy(buf + 1, DEFAULT_PSTR, DEFAULT_PSTRLEN); 
 			memset(buf + 1 + DEFAULT_PSTRLEN, 0, RESERVED_LEN);
@@ -45,6 +47,7 @@ struct b_string *make_handshake_message(char *info_hash, char *peer_id)
 					info_hash, HASH_LEN); 
 			memcpy(buf + 1 + DEFAULT_PSTRLEN + RESERVED_LEN + HASH_LEN, 
 					peer_id, PEER_ID_LEN); 
+			*(buf + HANDSHAKE_MESSAGE_LEN) = '\0';
 			b_string_set_length(ptr, HANDSHAKE_MESSAGE_LEN); 
 			return ptr;
 		}
@@ -165,27 +168,27 @@ struct b_string *generate_port_message(unsigned short port)
 #include <stddef.h>
 #include "unittest/cmockery.h"
 
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 /* case 1: torrent parse test */
 void generate_test_1(void **state) {
-	struct b_string *ptr = make_handshake_message("1234567890098765432",
-					"-AZ2060-12345678901");
+	struct b_string *ptr = make_handshake_message("1234567890098765432", "-AZ2060-12345678901");
 	if (ptr) {
 		b_string_hex_print(ptr);
-		printf("ptr->string %p\n", ptr->string);
-		//free(ptr->string);
 		b_string_free(ptr);
 	}
+}
+
+void generate_test_2(void **state) {
+	struct b_string *b = make_handshake_message("1234567890098765432", "-AZ2060-12345678901");
+
+	b_string_hex_print(b);
+	b_string_free(b);
+	return;
 }
 
 int main(int argc, char **argv)
 {
 	const UnitTest tests[] = {
-	    unit_test(generate_test_1),
+	    unit_test(generate_test_2),
 	};
 
 	run_tests(tests);

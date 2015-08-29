@@ -14,7 +14,6 @@
 
 #include "b_parse.h"
 
-#undef _UNIT_TEST
 #ifdef _UNIT_TEST
 extern void mock_assert(const int result, const char* const expression, 
 		                        const char * const file, const int line);
@@ -55,7 +54,7 @@ void b_string_free(struct b_string *ptr)
 	if (ptr) {
 		if (ptr->string) {
 			memset(ptr->string, 0, ptr->len);
-			//free(ptr->string);
+			free(ptr->string);
 		}
 		free(ptr);
 	}
@@ -663,6 +662,7 @@ void b_dict_print(struct b_dict *ptr)
 	TRACE(DUMP, "[ Dictionary Print end ]\n");
 }
 
+#undef _UNIT_TEST
 #ifdef _UNIT_TEST
 #include <setjmp.h>
 #include <stdarg.h>
