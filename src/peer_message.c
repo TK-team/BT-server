@@ -29,7 +29,7 @@ extern void _test_free(void* const ptr, const char* file, const int line);
 #define free(ptr) _test_free(ptr, __FILE__, __LINE__)
 #endif /* _UNIT_TEST */
 
-struct b_string *make_handshake_message(char *info_hash, char *peer_id)
+struct b_string *generate_handshake_message(char *info_hash, char *peer_id)
 {
 	struct b_string *ptr = NULL;
 	char *buf = NULL;
@@ -142,7 +142,7 @@ struct b_string *generate_piece_message(unsigned int piece_index, unsigned int b
 	memcpy(payload, &t, 4);
 	t = htonl(begin);
 	memcpy(payload + 4, &t, 4);
-	return generate_common_message(slice_len + 13, 7, (char *)payload, 0);
+	return generate_common_message(slice_len + 13, 7, (char *)payload, 1);
 }
 
 struct b_string *generate_cancel_message(unsigned int piece_index, unsigned int begin, unsigned int slice_len)
@@ -158,7 +158,7 @@ struct b_string *generate_cancel_message(unsigned int piece_index, unsigned int 
 struct b_string *generate_port_message(unsigned short port)
 {
 	unsigned short tmp = htons(port);
-	return generate_common_message(3, 8, (char *)&tmp, 1);
+	return generate_common_message(3, 9, (char *)&tmp, 1);
 }
 
 #ifdef _UNIT_TEST
@@ -170,25 +170,44 @@ struct b_string *generate_port_message(unsigned short port)
 
 /* case 1: torrent parse test */
 void generate_test_1(void **state) {
-	struct b_string *ptr = make_handshake_message("1234567890098765432", "-AZ2060-12345678901");
-	if (ptr) {
-		b_string_hex_print(ptr);
-		b_string_free(ptr);
-	}
-}
+	struct b_string *hand = generate_handshake_message("1234567890098765432", "-AZ2060-12345678901");
+	struct b_string *keep_alive = generate_keep_alive_message();
+	struct b_string *choke = generate_choke_message();
+	struct b_string *unchoke = generate_unchoke_message();
+	struct b_string *interested = generate_interested_message();
+	struct b_string *non_interested = generate_not_interested_message();
+	struct b_string *has_message = generate_have_message(100);
+	struct b_string *bitfield = generate_bitfield_message(10, "1234567890");
+	struct b_string *request = generate_request_message(100, 0x10000, SLICE_LEN); 
+	struct b_string *cancel = generate_cancel_message(100, 0x10000, SLICE_LEN); 
 
-void generate_test_2(void **state) {
-	struct b_string *b = make_handshake_message("1234567890098765432", "-AZ2060-12345678901");
+	b_string_hex_print(hand);
+	b_string_hex_print(keep_alive);
+	b_string_hex_print(choke);
+	b_string_hex_print(unchoke);
+	b_string_hex_print(interested);
+	b_string_hex_print(non_interested);
+	b_string_hex_print(has_message);
+	b_string_hex_print(bitfield);
+	b_string_hex_print(request);
+	b_string_hex_print(cancel);
 
-	b_string_hex_print(b);
-	b_string_free(b);
-	return;
+	b_string_free(hand);
+	b_string_free(keep_alive);
+	b_string_free(choke);
+	b_string_free(unchoke);
+	b_string_free(interested);
+	b_string_free(non_interested);
+	b_string_free(has_message);
+	b_string_free(bitfield);
+	b_string_free(request);
+	b_string_free(cancel);
 }
 
 int main(int argc, char **argv)
 {
 	const UnitTest tests[] = {
-	    unit_test(generate_test_2),
+	    unit_test(generate_test_1),
 	};
 
 	run_tests(tests);
