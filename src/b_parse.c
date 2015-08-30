@@ -50,6 +50,22 @@ struct b_string *b_string_alloc(void)
 		return NULL;
 }
 
+struct b_string *b_string_alloc_reserved(char *buf, unsigned int len, unsigned int reserved)
+{
+	struct b_string *ptr = malloc(sizeof(struct b_string));
+
+	if (ptr) {
+		ptr->len = len;
+		ptr->head = buf;
+		ptr->data = buf + reserved;
+		ptr->prev = NULL;
+		return ptr;
+	}
+	else
+		return NULL;
+
+}
+
 void b_string_free(struct b_string *ptr)
 {
 	if (ptr) {
@@ -60,10 +76,9 @@ void b_string_free(struct b_string *ptr)
 	}
 }
 
-void b_string_set(struct b_string *ptr, char *buf, unsigned int reserved)
+void b_string_set(struct b_string *ptr, char *buf)
 {
-	ptr->head = buf;
-	ptr->data = buf + reserved;
+	ptr->data = buf;
 }
 
 char *b_string_get(struct b_string *ptr)
@@ -74,6 +89,16 @@ char *b_string_get(struct b_string *ptr)
 unsigned int b_string_get_length(struct b_string *ptr)
 {
 	return ptr->len;
+}
+
+char *b_string_set_head(struct b_string *ptr, char *head)
+{
+	ptr->head = head;
+}
+
+char *b_string_get_head(struct b_string *ptr)
+{
+	return ptr->head;
 }
 
 void b_string_set_length(struct b_string *ptr, unsigned int len)
@@ -128,7 +153,8 @@ char *b_string_parse(char *buf, struct b_string *target)
 			return NULL;
 		}
 		tmp_b = malloc(sizeof(char) * (val + 1));
-		b_string_set(target, tmp_b, 0);
+		b_string_set(target, tmp_b);
+		b_string_set_head(target, tmp_b);
 		b_string_set_length(target, val);
 		tmp_b = b_string_get(target);
 		memcpy(tmp_b, s + 1, val);
