@@ -6,11 +6,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 #include <time.h> 
 
 #include "peer_message.h"
-#include "b_parse.h"
-#include "list.h"
 
 #ifdef _UNIT_TEST
 extern void mock_assert(const int result, const char* const expression, 
@@ -208,6 +208,60 @@ struct b_string *generate_port_message(unsigned short port)
 	return set_prefix_and_msgid(MSG_ID_LEN + 2, PEER_MESSAGE_PORT, ptr);
 }
 
+int send_message(int send_fd, struct b_string *ptr)
+{
+	int ret = send(send_fd, b_string_get(ptr), b_string_get_length(ptr), 0);
+	if (ret == -1) {
+		TRACE(ERROR, "Send Message error: errno(%d)\n", errno);
+		return -1;
+	}
+	return 0;
+}
+
+void deal_keep_alive(struct peer_mgnt *ptr)
+{
+	/* Flush the peer keep_alive timer */
+}
+
+int deal_message(struct peer *ptr, struct b_string *string)
+{
+	unsigned int len_prefix = b_string_get(ptr) - 4;
+	char type = *(b_string_get(ptr) + 4);
+
+	switch(type) {
+		case PEER_MESSAGE_KEEP_ALIVE:
+		case PEER_MESSAGE_CHOKE:
+			if (len_prefix) {
+				
+			}
+			else {
+			/* KEEP_ALIVE */
+				deal_keep_alive(ptr); 
+			}
+			break;
+		case PEER_MESSAGE_UNCHOCKE:
+			break;
+		case PEER_MESSAGE_INTERESTED:
+			break;
+		case PEER_MESSAGE_NOT_INTERESTED:
+			break;
+		case PEER_MESSAGE_HAVE:
+			break;
+		case PEER_MESSAGE_BITFIELD:
+			break;
+		case PEER_MESSAGE_REQUEST:
+			break;
+		case PEER_MESSAGE_PIECE:
+			break;
+		case PEER_MESSAGE_CANCEL:
+			break;
+		case PEER_MESSAGE_PORT:
+			break;
+		default:
+			break;
+	}
+}
+
 #ifdef _UNIT_TEST
 
 #include <setjmp.h>
@@ -215,7 +269,7 @@ struct b_string *generate_port_message(unsigned short port)
 #include <stddef.h>
 #include "unittest/cmockery.h"
 
-/* case 1: torrent parse test */
+/* case 1: generate message test */
 void generate_test_1(void **state) {
 	struct b_string *hand = generate_handshake_message("1234567890098765432", "-AZ2060-12345678901");
 	struct b_string *keep_alive = generate_keep_alive_message();

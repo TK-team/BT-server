@@ -1,6 +1,10 @@
 #ifndef _PEER_MESSAGE_H 
 #define _PEER_MESSAGE_H 
 
+#include "b_parse.h"
+#include "list.h"
+#include "peer_manage.h"
+
 
 #define HANDSHAKE_MESSAGE_LEN		68
 #define	DEFAULT_PSTRLEN			19
