@@ -72,6 +72,13 @@ int bt_timer_init(void)
 	return setitimer(ITIMER_REAL, &timer_list.value, &timer_list.ovalue);
 }
 
+/* func:	run when time up
+ * data:	func paramater
+ * interval:	timer expire time
+ * type:	BT_TIMER_SINGLE or BT_TIMER_REPEAT : run the function only once or looping.
+ *
+ * return:	the timer_id, should be used when delete timer.
+ */
 int bt_timer_add(timer_expired func, void *data, int interval, int type)
 {
 	struct bt_timer	*ptr = malloc(sizeof(struct bt_timer));
@@ -88,21 +95,19 @@ int bt_timer_add(timer_expired func, void *data, int interval, int type)
 	return ptr->timer_id;
 }
 
-void bt_timer_del(int timer_id)
+void bt_timer_del(struct bt_timer *ptr)
 {
-	struct bt_timer *vec, *tmp;
-
-	list_for_each_entry_safe(vec, tmp, &timer_list.list, head) {
-		if (vec->timer_id == timer_id) {
-			list_del(&vec->head);
-			break;
-		}
-	}
+	list_del(&ptr->head);
+	free(ptr);
 }
 
 void bt_timer_finit(void)
 {
+	struct bt_timer *vec, *tmp;
+
 	signal(SIGALRM, timer_list.old_sigfunc);
+	list_for_each_entry_safe(vec, tmp, &timer_list.list, head)
+		bt_timer_del(vec);
 	memset(&timer_list, 0, sizeof(timer_list));
 }
 
