@@ -223,14 +223,14 @@ void deal_keep_alive(struct peer_mgnt *ptr)
 	/* Flush the peer keep_alive timer */
 }
 
-int deal_message(struct peer *ptr, struct b_string *string)
+int deal_message(struct peer_mgnt *ptr, struct b_string *string)
 {
-	unsigned int len_prefix = b_string_get(ptr) - 4;
-	char type = *(b_string_get(ptr) + 4);
+	unsigned int len_prefix = b_string_get_length(string) - 4;
+	char type = *(b_string_get(string) + 4);
 
 	switch(type) {
 		case PEER_MESSAGE_KEEP_ALIVE:
-		case PEER_MESSAGE_CHOKE:
+		/* with PEER_MESSAGE_CHOKE */
 			if (len_prefix) {
 				
 			}
@@ -260,6 +260,7 @@ int deal_message(struct peer *ptr, struct b_string *string)
 		default:
 			break;
 	}
+	return 0;
 }
 
 #ifdef _UNIT_TEST

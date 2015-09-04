@@ -91,7 +91,7 @@ unsigned int b_string_get_length(struct b_string *ptr)
 	return ptr->len;
 }
 
-char *b_string_set_head(struct b_string *ptr, char *head)
+void b_string_set_head(struct b_string *ptr, char *head)
 {
 	ptr->head = head;
 }
