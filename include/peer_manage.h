@@ -3,6 +3,7 @@
 
 #include "list.h"
 #include "b_parse.h"
+#include "bt_task.h"
 
 #define PEER_ID_LEN			20
 
@@ -30,7 +31,10 @@ struct peer_mgnt {
 	//TODO: Data request list
 	//TODO: Data be requested list
 	struct peer_stat stat;
-	//TODO: Timer for keep alive
+	//Use to maintain the keep_alive message receive from peer per 120s.
+	struct bt_timer *rcv_keep_alive;
+	//Use to maintain the keep_alive message send to peer per 120s.
+	struct bt_timer *send_keep_alive;
 };
 
 #endif /* _PEER_MANAGE_H_ */

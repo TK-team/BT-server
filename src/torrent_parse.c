@@ -333,6 +333,7 @@ void torrent_info_print(struct torrent_info *ptr)
 		TRACE(INFO, "[ dir_name ]:\n%s\n", b_string_get(ptr->multi.dir_name));
 	multi_files_print(&ptr->multi);
 }
+
 void torrent_print(struct torrent *ptr)
 { 
 	time_t t = (time_t )(ptr->create_date);

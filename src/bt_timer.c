@@ -28,6 +28,8 @@ extern void _test_free(void* const ptr, const char* file, const int line);
 #endif /* _UNIT_TEST */
 
 static struct bt_timer_list timer_list;
+static struct list_head *get_position(int interval, struct list_head *list);
+static void bt_timer_func(int signo);
 
 static struct list_head *get_position(int interval, struct list_head *list)
 {
@@ -79,7 +81,7 @@ int bt_timer_init(void)
  *
  * return:	the timer_id, should be used when delete timer.
  */
-int bt_timer_add(timer_expired func, void *data, int interval, int type)
+struct bt_timer *bt_timer_add(timer_expired func, void *data, unsigned int interval, int type)
 {
 	struct bt_timer	*ptr = malloc(sizeof(struct bt_timer));
 
@@ -92,13 +94,20 @@ int bt_timer_add(timer_expired func, void *data, int interval, int type)
 	ptr->interval = interval;
 
 	list_add_tail(&ptr->head, get_position(interval, &timer_list.list));
-	return ptr->timer_id;
+	return ptr;
 }
 
 void bt_timer_del(struct bt_timer *ptr)
 {
 	list_del(&ptr->head);
 	free(ptr);
+}
+
+void bt_timer_update(struct bt_timer *ptr)
+{
+	list_del(&ptr->head);
+	ptr->elapse = 0;
+	list_add_tail(&ptr->head, get_position(ptr->interval, &timer_list.list));
 }
 
 void bt_timer_finit(void)
@@ -111,6 +120,7 @@ void bt_timer_finit(void)
 	memset(&timer_list, 0, sizeof(timer_list));
 }
 
+#undef _UNIT_TEST
 #ifdef _UNIT_TEST
 #include <setjmp.h>
 #include <stdarg.h>

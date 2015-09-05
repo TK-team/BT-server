@@ -11,6 +11,7 @@
 #include <time.h> 
 
 #include "peer_message.h"
+#include "bt_timer.h"
 
 #ifdef _UNIT_TEST
 extern void mock_assert(const int result, const char* const expression, 
@@ -221,6 +222,7 @@ int send_message(int send_fd, struct b_string *ptr)
 void deal_keep_alive(struct peer_mgnt *ptr)
 {
 	/* Flush the peer keep_alive timer */
+	bt_timer_update(ptr->rcv_keep_alive);
 }
 
 int deal_message(struct peer_mgnt *ptr, struct b_string *string)

@@ -31,13 +31,10 @@ struct bt_timer_list {
 	int num;
 };
 
-static struct bt_timer_list timer_list;
-static struct list_head *get_position(int interval, struct list_head *list);
-static void bt_timer_func(int signo);
-
 extern int bt_timer_init(void);
-extern int bt_timer_add(timer_expired func, void *data, int interval, int type);
-extern void bt_timer_del(int timer_id);
+extern struct bt_timer *bt_timer_add(timer_expired func, void *data, unsigned int interval, int type);
+extern void bt_timer_del(struct bt_timer *);
+extern void bt_timer_update(struct bt_timer *ptr);
 extern void bt_timer_finit(void);
 
 #endif /* _BT_TIMER_H_ */
