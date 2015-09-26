@@ -5,18 +5,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h> 
+#include <time.h>
 #include "torrent.h"
 
 #ifdef _UNIT_TEST
-extern void mock_assert(const int result, const char* const expression, 
+extern void mock_assert(const int result, const char* const expression,
 		                        const char * const file, const int line);
 #undef assert
 #define assert(expression) \
 	mock_assert((int)(expression), #expression, __FILE__, __LINE__);
 
 extern void* _test_malloc(const size_t size, const char* file, const int line);
-extern void* _test_calloc(const size_t number_of_elements, const size_t size, 
+extern void* _test_calloc(const size_t number_of_elements, const size_t size,
 		                          const char* file, const int line);
 extern void _test_free(void* const ptr, const char* file, const int line);
 
@@ -46,6 +46,7 @@ struct multi_files *multi_files_alloc(struct b_dict *dict)
 				vec->val = NULL;
 				continue;
 			}
+
 			if (CMP_EQUAL == strncmp(vec->key, "length", KEY_LEN) && vec->type == 'i') {
 				ptr->length = b_int_get((struct b_int *)(vec->val));
 				continue;
@@ -79,8 +80,9 @@ void info_multi_files_free(struct info_multi_file *ptr)
 		struct multi_files *tmp;
 		struct multi_files *vec;
 
-		list_for_each_entry_safe(vec, tmp, &ptr->files_list, head)
+        list_for_each_entry_safe(vec, tmp, &ptr->files_list, head) {
 			multi_files_free(vec);
+        }
 
 		b_string_free(ptr->dir_name);
 	}
@@ -98,6 +100,23 @@ struct torrent *torrent_alloc(void)
 	return NULL;
 }
 
+int torrent_info_free(struct torrent_info *ptr)
+{
+    if (ptr) {
+        b_string_free(ptr->piece_hash);
+        b_string_free(ptr->private);
+        b_string_free(ptr->name);
+        b_string_free(ptr->name_utf8);
+        b_string_free(ptr->md5sum);
+        b_string_free(ptr->publisher);
+        b_string_free(ptr->publisher_utf8);
+        b_string_free(ptr->publisher_url);
+        b_string_free(ptr->publisher_url);
+        info_multi_files_free(&ptr->multi);
+    }
+    return 0;
+}
+
 int torrent_free(struct torrent *ptr)
 {
 	if (ptr) {
@@ -105,16 +124,7 @@ int torrent_free(struct torrent *ptr)
 		b_string_free(ptr->comment);
 		b_string_free(ptr->comment_utf8);
 		b_list_free(ptr->announce_list);
-		b_string_free(ptr->info.piece_hash);
-		b_string_free(ptr->info.name);
-		b_string_free(ptr->info.name_utf8);
-		b_string_free(ptr->info.md5sum);
-		b_string_free(ptr->info.private);
-		b_string_free(ptr->info.publisher);
-		b_string_free(ptr->info.publisher_utf8);
-		b_string_free(ptr->info.publisher_url);
-		b_string_free(ptr->info.publisher_url_utf8);
-		info_multi_files_free(&ptr->info.multi);
+        torrent_info_free(&ptr->info);
 		free(ptr);
 	}
 	else
@@ -143,7 +153,7 @@ int torrent_info_parse(struct b_dict *info_dict, struct torrent_info *info)
 			continue;
 		}
 		if (CMP_EQUAL == strncmp(vec->key, "name.utf-8", KEY_LEN) && vec->type == 's') {
-			info->name = (struct b_string *)(vec->val);
+            info->name_utf8 = (struct b_string *)(vec->val);
 			vec->val = NULL;
 			continue;
 		}
@@ -186,8 +196,8 @@ int torrent_info_parse(struct b_dict *info_dict, struct torrent_info *info)
 			struct l_entry *tmp_l = NULL;
 			list_for_each_entry_safe(vec_l, tmp_l, &(((struct b_list *)(vec->val))->l_list), head) {
 				if (vec_l->type == 'd') {
-					struct multi_files *files_ptr = multi_files_alloc(
-							(struct b_dict *)(vec_l->entry));
+                    struct multi_files *files_ptr = multi_files_alloc(
+                            (struct b_dict *)(vec_l->entry));
 					if (files_ptr) {
 						multi_files_add(files_ptr, &info->multi);
 					}
@@ -196,7 +206,6 @@ int torrent_info_parse(struct b_dict *info_dict, struct torrent_info *info)
 					}
 				}
 			}
-			vec->val = NULL;
 			continue;
 		}
 	}
@@ -212,6 +221,7 @@ int torrent_parse(char *buf, struct torrent *ptr)
 		struct d_entry *vec;
 		struct d_entry *tmp;
 		char *t = b_dict_parse(buf, dict_ptr);
+
 		if (!t) {
 			b_dict_free(dict_ptr);
 			return -1;
@@ -283,14 +293,14 @@ void multi_files_print(struct info_multi_file *ptr)
 
 	list_for_each_entry(vec, &ptr->files_list, head) {
 		if (vec->path) {
-			TRACE(INFO, "[ path ]:\n"); 
+			TRACE(INFO, "[ path ]:\n");
 			b_list_print(vec->path);
 		}
 		if (vec->path_utf8) {
-			TRACE(INFO, "[ path(utf-8) ]:\n"); 
+			TRACE(INFO, "[ path(utf-8) ]:\n");
 			b_list_print(vec->path);
 		}
-		TRACE(INFO, "[ lenght ]:\n%d\n", vec->length); 
+		TRACE(INFO, "[ lenght ]:\n%d\n", vec->length);
 	}
 }
 
@@ -320,14 +330,12 @@ void torrent_info_print(struct torrent_info *ptr)
 		unsigned char *p_hash = (unsigned char *)b_string_get(ptr->piece_hash);
 		unsigned int len = b_string_get_length(ptr->piece_hash);
 		int i = 0;
-
 		TRACE(INFO, "[ piece_hash (%d) ]:\n\n", len);
 		for (; i < len; i++) {
 			if (i && (!(i % 20)))
 				printf("\n");
 			printf("%02x ", *(p_hash + i));
-		}
-		printf("\n");
+		} printf("\n");
 	}
 	if (ptr->multi.dir_name)
 		TRACE(INFO, "[ dir_name ]:\n%s\n", b_string_get(ptr->multi.dir_name));
@@ -335,7 +343,7 @@ void torrent_info_print(struct torrent_info *ptr)
 }
 
 void torrent_print(struct torrent *ptr)
-{ 
+{
 	time_t t = (time_t )(ptr->create_date);
 
 	TRACE(INFO, "[ Torrent Info BEGIN ]\n");
