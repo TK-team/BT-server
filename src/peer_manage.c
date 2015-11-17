@@ -3,6 +3,8 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>          /* See NOTES */
+#include <netinet/in.h>
+#include <unistd.h>
 
 #include "peer_manage.h"
 #include "peer_message.h"
@@ -22,7 +24,7 @@ void peer_free(struct peer_mgnt *ptr)
 	free(ptr);
 }
 
-struct peer_mgnt *peer_init(unsigned int ip, unsigned short port, struct b_string peer_id, struct bt_task *task_ptr)
+struct peer_mgnt *peer_init(unsigned int ip, unsigned short port, struct b_string *peer_id, struct bt_task *task_ptr)
 {
 	struct peer_mgnt *ptr = peer_alloc();
 	int sockfd = 0;
@@ -32,7 +34,7 @@ struct peer_mgnt *peer_init(unsigned int ip, unsigned short port, struct b_strin
 	ptr->ip = ip;
 	ptr->port = port;
 	ptr->peer_id = peer_id;
-	ptr->task_ptr = task_ptr;
+	ptr->task = task_ptr;
 
 	/* Create socket for peer */
 	ret = sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -63,3 +65,9 @@ void peer_destory(struct peer_mgnt *ptr)
 {
 
 }
+
+int main(int argc, char **argv)
+{
+	return 0;
+}
+

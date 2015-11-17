@@ -16,7 +16,6 @@
  * =====================================================================================
  */
 #include <stdlib.h>
-#include "bt_types.h"
 
 int connect_tracker(const char *url)
 {
@@ -28,12 +27,12 @@ int connect_tracker(const char *url)
 
 	/*   */
 
-	return OK;
+	return 0;
 }
 
 int parse_peer_info()
 {
-	return OK;
+	return 0;
 }
 
 
