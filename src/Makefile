@@ -30,6 +30,7 @@ COMPILE_OPTIONS = -Wall $(CFLAGS)
 # Dependency options
 DEPENDENCY_OPTIONS = -MM $(CFLAGS)
 
+LIBS = -L../libevent/libs -levent
 
 #----------------------- Do not edit below this line --------------------------
 
@@ -75,6 +76,4 @@ depclean:
 	rm -f $(DEPENDENCIES)
 
 clean-all: clean depclean
-
-
 
